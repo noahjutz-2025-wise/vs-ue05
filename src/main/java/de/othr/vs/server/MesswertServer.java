@@ -5,24 +5,27 @@ import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
 import your.pkg.Bewertung;
 import your.pkg.Messwert;
 import your.pkg.SimpleActionServiceGrpc.SimpleActionServiceImplBase;
 import your.pkg.StreamActionServiceGrpc;
 
 class SimpleActionServiceImpl extends SimpleActionServiceImplBase {
+  public static Bewertung b =
+      Bewertung.newBuilder()
+          .setAction("Do something")
+          .setTime(
+              Timestamp.newBuilder()
+                  .setSeconds(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()))
+                  .build())
+          .build();
 
   @Override
   public void getRequiredAction(Messwert request, StreamObserver<Bewertung> responseObserver) {
+
     System.out.println(request);
-    responseObserver.onNext(
-        Bewertung.newBuilder()
-            .setAction("Do something")
-            .setTime(
-                Timestamp.newBuilder()
-                    .setSeconds(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()))
-                    .build())
-            .build());
+    responseObserver.onNext(b);
     responseObserver.onCompleted();
   }
 }
@@ -32,7 +35,9 @@ class StreamActionServiceImpl extends StreamActionServiceGrpc.StreamActionServic
   public StreamObserver<Messwert> streamRequiredAction(StreamObserver<Bewertung> responseObserver) {
     return new StreamObserver<>() {
       @Override
-      public void onNext(Messwert messwert) {}
+      public void onNext(Messwert messwert) {
+        responseObserver.onNext(SimpleActionServiceImpl.b);
+      }
 
       @Override
       public void onError(Throwable throwable) {}
