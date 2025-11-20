@@ -10,7 +10,7 @@ message Messwert {
 
 message Bewertung {
     string action = 1;
-    Timestamp time = 2;
+    google.protobuf.Timestamp time = 2;
 }
 
 service SimpleActionService {
@@ -18,5 +18,5 @@ service SimpleActionService {
 }
 
 service StreamActionService {
-    rpc streamRequiredAction(stream Messwert) returns (stream Bewertung)
+    rpc streamRequiredAction(stream Messwert) returns (stream Bewertung);
 }
