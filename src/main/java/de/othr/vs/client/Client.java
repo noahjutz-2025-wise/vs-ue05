@@ -74,10 +74,12 @@ public class Client {
 
               @Override
               public void onNext(Bewertung bewertung) {
-                switch (bewertung.getAction()) {
-                  case "lower" -> damHeight--;
-                  case "higher" -> damHeight++;
-                }
+                damHeight =
+                    switch (bewertung.getAction()) {
+                      case "lower" -> damHeight > 0 ? damHeight - 1 : 0;
+                      case "higher" -> damHeight < 1000 ? damHeight + 1 : 1000;
+                      default -> damHeight;
+                    };
                 System.out.println("Dam height: " + damHeight);
               }
 
