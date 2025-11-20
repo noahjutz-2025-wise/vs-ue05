@@ -63,7 +63,7 @@ public class Client {
         });
   }
 
-  private static void streamCallback(Channel channel) {
+  private static void streamCallback(Channel channel) throws InterruptedException {
     var random = new Random();
     var streamStub = StreamActionServiceGrpc.newStub(channel);
 
@@ -90,8 +90,10 @@ public class Client {
 
     for (int i = 0; i < 1000; i++) {
       var x = random.nextInt();
+      System.out.println("Wasserstand: " + x);
       var measurement = Messwert.newBuilder().setSensor("Wasserstand").setValue(x).build();
       handle.onNext(measurement);
+      Thread.sleep(300);
     }
   }
 }
