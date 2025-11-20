@@ -14,16 +14,20 @@ import javax.security.auth.callback.CallbackHandler;
 
 public class Client {
   public static Messwert sampleMesswert =
-      Messwert.newBuilder().setSensor("Wasserstand").setValue(9.4).build();
+      Messwert.newBuilder().setSensor("Wasserstand").setValue(0.1).build();
+    public static Messwert sampleMesswert2 =
+        Messwert.newBuilder().setSensor("Wasserstand").setValue(0.2).build();
+    public static Messwert sampleMesswert3 =
+        Messwert.newBuilder().setSensor("Wasserstand").setValue(0.3).build();
 
   public static void main(String[] args) throws InterruptedException {
     ManagedChannel channel =
         ManagedChannelBuilder.forAddress("localhost", 1234).usePlaintext().build();
 
-    System.out.println("simpleBlocking");
-    simpleBlocking(channel);
-    System.out.println("simpleCallback");
-    simpleCallback(channel);
+    //System.out.println("simpleBlocking");
+    //simpleBlocking(channel);
+    //System.out.println("simpleCallback");
+    //simpleCallback(channel);
     System.out.println("streamBlocking -- UNSUPPORTED");
     System.out.println("streamCallback");
     streamCallback(channel);
@@ -76,7 +80,7 @@ public class Client {
             });
 
     handle.onNext(sampleMesswert);
-    handle.onNext(sampleMesswert);
-    handle.onNext(sampleMesswert);
+    handle.onNext(sampleMesswert2);
+    handle.onNext(sampleMesswert3);
   }
 }
