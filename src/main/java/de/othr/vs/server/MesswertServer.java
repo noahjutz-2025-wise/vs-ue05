@@ -13,6 +13,7 @@ class SimpleActionServiceImpl extends SimpleActionServiceImplBase {
 
   @Override
   public void getRequiredAction(Messwert request, StreamObserver<Bewertung> responseObserver) {
+    System.out.println(request);
     responseObserver.onNext(
         Bewertung.newBuilder()
             .setAction("Do something")

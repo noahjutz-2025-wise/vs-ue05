@@ -24,10 +24,12 @@ public class Client {
           public void onCompleted() {}
 
           @Override
-          public void onError(Throwable arg0) {}
+          public void onError(Throwable t) {}
 
           @Override
-          public void onNext(Bewertung arg0) {}
+          public void onNext(Bewertung b) {
+            System.out.println(b);
+          }
         });
     channel.awaitTermination(30L, TimeUnit.SECONDS);
   }
