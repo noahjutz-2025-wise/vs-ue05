@@ -10,6 +10,8 @@ import your.pkg.Messwert;
 import your.pkg.SimpleActionServiceGrpc;
 import your.pkg.StreamActionServiceGrpc;
 
+import javax.security.auth.callback.CallbackHandler;
+
 public class Client {
   public static Messwert sampleMesswert =
       Messwert.newBuilder().setSensor("Wasserstand").setValue(9.4).build();
@@ -22,6 +24,7 @@ public class Client {
     simpleBlocking(channel);
     System.out.println("simpleCallback");
     simpleCallback(channel);
+    System.out.println("streamBlocking -- UNSUPPORTED");
     System.out.println("streamCallback");
     streamCallback(channel);
 
@@ -48,32 +51,32 @@ public class Client {
           public void onError(Throwable t) {}
 
           @Override
-          public void onNext(Bewertung b) {
-            System.out.println(b);
+          public void onNext(Bewertung bewertung) {
+            System.out.println("Msg from server: " + bewertung);
           }
         });
   }
 
   private static void streamCallback(Channel channel) {
-      var streamStub = StreamActionServiceGrpc.newStub(channel);
+    var streamStub = StreamActionServiceGrpc.newStub(channel);
 
-      var handle =
-          streamStub.streamRequiredAction(
-              new StreamObserver<Bewertung>() {
-                  @Override
-                  public void onNext(Bewertung bewertung) {
-                      System.out.println(bewertung);
-                  }
+    var handle =
+        streamStub.streamRequiredAction(
+            new StreamObserver<>() {
+              @Override
+              public void onNext(Bewertung bewertung) {
+                System.out.println("Msg from server: " + bewertung);
+              }
 
-                  @Override
-                  public void onError(Throwable throwable) {}
+              @Override
+              public void onError(Throwable throwable) {}
 
-                  @Override
-                  public void onCompleted() {}
-              });
+              @Override
+              public void onCompleted() {}
+            });
 
-      handle.onNext(sampleMesswert);
-      handle.onNext(sampleMesswert);
-      handle.onNext(sampleMesswert);
+    handle.onNext(sampleMesswert);
+    handle.onNext(sampleMesswert);
+    handle.onNext(sampleMesswert);
   }
 }
