@@ -4,6 +4,8 @@ import io.grpc.Channel;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
+
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import your.pkg.Bewertung;
 import your.pkg.Messwert;
@@ -15,19 +17,19 @@ import javax.security.auth.callback.CallbackHandler;
 public class Client {
   public static Messwert sampleMesswert =
       Messwert.newBuilder().setSensor("Wasserstand").setValue(0.1).build();
-    public static Messwert sampleMesswert2 =
-        Messwert.newBuilder().setSensor("Wasserstand").setValue(0.2).build();
-    public static Messwert sampleMesswert3 =
-        Messwert.newBuilder().setSensor("Wasserstand").setValue(0.3).build();
+  public static Messwert sampleMesswert2 =
+      Messwert.newBuilder().setSensor("Wasserstand").setValue(0.2).build();
+  public static Messwert sampleMesswert3 =
+      Messwert.newBuilder().setSensor("Wasserstand").setValue(0.3).build();
 
   public static void main(String[] args) throws InterruptedException {
     ManagedChannel channel =
         ManagedChannelBuilder.forAddress("localhost", 1234).usePlaintext().build();
 
-    //System.out.println("simpleBlocking");
-    //simpleBlocking(channel);
-    //System.out.println("simpleCallback");
-    //simpleCallback(channel);
+    // System.out.println("simpleBlocking");
+    // simpleBlocking(channel);
+    // System.out.println("simpleCallback");
+    // simpleCallback(channel);
     System.out.println("streamBlocking -- UNSUPPORTED");
     System.out.println("streamCallback");
     streamCallback(channel);
@@ -62,14 +64,21 @@ public class Client {
   }
 
   private static void streamCallback(Channel channel) {
+    var random = new Random();
     var streamStub = StreamActionServiceGrpc.newStub(channel);
 
     var handle =
         streamStub.streamRequiredAction(
             new StreamObserver<>() {
+              int damHeight = 0;
+
               @Override
               public void onNext(Bewertung bewertung) {
-                System.out.println("Msg from server: " + bewertung);
+                switch (bewertung.getAction()) {
+                  case "lower" -> damHeight--;
+                  case "higher" -> damHeight++;
+                }
+                System.out.println("Dam height: " + damHeight);
               }
 
               @Override
@@ -79,8 +88,10 @@ public class Client {
               public void onCompleted() {}
             });
 
-    handle.onNext(sampleMesswert);
-    handle.onNext(sampleMesswert2);
-    handle.onNext(sampleMesswert3);
+    for (int i = 0; i < 1000; i++) {
+      var x = random.nextInt();
+      var measurement = Messwert.newBuilder().setSensor("Wasserstand").setValue(x).build();
+      handle.onNext(measurement);
+    }
   }
 }
