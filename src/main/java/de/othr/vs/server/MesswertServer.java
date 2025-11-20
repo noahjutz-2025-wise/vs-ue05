@@ -11,41 +11,29 @@ import your.pkg.SimpleActionServiceGrpc.SimpleActionServiceImplBase;
 
 class SimpleActionServiceImpl extends SimpleActionServiceImplBase {
 
-    @Override
-    public void getRequiredAction(
-        Messwert request,
-        StreamObserver<Bewertung> responseObserver
-    ) {
-        responseObserver.onNext(
-            Bewertung.newBuilder()
-                .setAction("Do something")
-                .setTime(
-                    Timestamp.newBuilder()
-                        .setSeconds(
-                            TimeUnit.MILLISECONDS.toSeconds(
-                                System.currentTimeMillis()
-                            )
-                        )
-                        .build()
-                )
-                .build()
-        );
-        responseObserver.onCompleted();
-    }
+  @Override
+  public void getRequiredAction(Messwert request, StreamObserver<Bewertung> responseObserver) {
+    responseObserver.onNext(
+        Bewertung.newBuilder()
+            .setAction("Do something")
+            .setTime(
+                Timestamp.newBuilder()
+                    .setSeconds(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()))
+                    .build())
+            .build());
+    responseObserver.onCompleted();
+  }
 }
 
 public class MesswertServer {
 
-    public static void main(String[] args)
-        throws IOException, InterruptedException {
-        var server = ServerBuilder.forPort(1234)
-            .addService(new SimpleActionServiceImpl())
-            .build();
+  public static void main(String[] args) throws IOException, InterruptedException {
+    var server = ServerBuilder.forPort(1234).addService(new SimpleActionServiceImpl()).build();
 
-        server.start();
+    server.start();
 
-        System.out.println("Server running...");
+    System.out.println("Server running...");
 
-        server.awaitTermination();
-    }
+    server.awaitTermination();
+  }
 }
