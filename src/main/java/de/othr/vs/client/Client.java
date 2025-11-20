@@ -1,6 +1,5 @@
 package de.othr.vs.client;
 
-import de.othr.vs.server.MesswertServer;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
@@ -15,10 +14,12 @@ public class Client {
     ManagedChannel channel =
         ManagedChannelBuilder.forAddress("localhost", 1234).usePlaintext().build();
 
+    var sampleMesswert = Messwert.newBuilder().setSensor("Wasserstand").setValue(9.4).build();
+
     var stub = SimpleActionServiceGrpc.newStub(channel);
 
     stub.getRequiredAction(
-        Messwert.newBuilder().setSensor("Wasserstand").setValue(9.4).build(),
+        sampleMesswert,
         new StreamObserver<>() {
           @Override
           public void onCompleted() {}
@@ -31,6 +32,11 @@ public class Client {
             System.out.println(b);
           }
         });
+
+    var blockingStub = SimpleActionServiceGrpc.newBlockingStub(channel);
+
+    var res = blockingStub.getRequiredAction(sampleMesswert);
+    System.out.println(res);
     channel.awaitTermination(30L, TimeUnit.SECONDS);
   }
 }
