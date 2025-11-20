@@ -1,4 +1,22 @@
 syntax = "proto3";
 package your.pkg;
 option java_multiple_files = true;
-//import "google/protobuf/timestamp.proto"; // see link "Protocol Buffers Well-Known Types" in README for pre-defined types
+import "google/protobuf/timestamp.proto";
+
+message Messwert {
+    string sensor = 1;
+    double value = 2;
+}
+
+message Bewertung {
+    string action = 1;
+    Timestamp time = 2;
+}
+
+service SimpleActionService {
+    rpc getRequiredAction(Messwert) returns (Bewertung);
+}
+
+service StreamActionService {
+    rpc streamRequiredAction(stream Messwert) returns (stream Bewertung)
+}
