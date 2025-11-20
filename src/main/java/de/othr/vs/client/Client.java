@@ -95,7 +95,7 @@ public class Client {
       System.out.println("Wasserstand: " + x);
       var measurement = Messwert.newBuilder().setSensor("Wasserstand").setValue(x).build();
       handle.onNext(measurement);
-      Thread.sleep(1000);
+      Thread.sleep(3000);
     }
   }
 }

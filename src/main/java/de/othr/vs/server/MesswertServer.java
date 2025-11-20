@@ -34,6 +34,8 @@ class StreamActionServiceImpl extends StreamActionServiceGrpc.StreamActionServic
   @Override
   public StreamObserver<Messwert> streamRequiredAction(StreamObserver<Bewertung> responseObserver) {
     return new StreamObserver<>() {
+      double previousWaterLevel = 0;
+
       @Override
       public void onNext(Messwert messwert) {
         var time =
@@ -41,11 +43,12 @@ class StreamActionServiceImpl extends StreamActionServiceGrpc.StreamActionServic
                 .setSeconds(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         var action =
             switch (messwert.getValue()) {
-              case double d when d > 500 -> "higher";
+              case double d when d > previousWaterLevel -> "higher";
               default -> "lower";
             };
 
         responseObserver.onNext(Bewertung.newBuilder().setAction(action).setTime(time).build());
+        previousWaterLevel = messwert.getValue();
       }
 
       @Override
