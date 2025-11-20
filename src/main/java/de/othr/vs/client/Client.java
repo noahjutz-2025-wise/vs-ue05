@@ -17,10 +17,6 @@ import javax.security.auth.callback.CallbackHandler;
 public class Client {
   public static Messwert sampleMesswert =
       Messwert.newBuilder().setSensor("Wasserstand").setValue(0.1).build();
-  public static Messwert sampleMesswert2 =
-      Messwert.newBuilder().setSensor("Wasserstand").setValue(0.2).build();
-  public static Messwert sampleMesswert3 =
-      Messwert.newBuilder().setSensor("Wasserstand").setValue(0.3).build();
 
   public static void main(String[] args) throws InterruptedException {
     ManagedChannel channel =
@@ -30,7 +26,6 @@ public class Client {
     // simpleBlocking(channel);
     // System.out.println("simpleCallback");
     // simpleCallback(channel);
-    System.out.println("streamBlocking -- UNSUPPORTED");
     System.out.println("streamCallback");
     streamCallback(channel);
 
@@ -91,9 +86,9 @@ public class Client {
             });
 
     for (int i = 0; i < 1000; i++) {
-      var x = random.nextInt(1000);
-      System.out.println("Wasserstand: " + x);
-      var measurement = Messwert.newBuilder().setSensor("Wasserstand").setValue(x).build();
+      var waterLevel = random.nextInt(1000);
+      System.out.println("Wasserstand: " + waterLevel);
+      var measurement = Messwert.newBuilder().setSensor("Wasserstand").setValue(waterLevel).build();
       handle.onNext(measurement);
       Thread.sleep(3000);
     }

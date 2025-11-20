@@ -41,11 +41,7 @@ class StreamActionServiceImpl extends StreamActionServiceGrpc.StreamActionServic
         var time =
             Timestamp.newBuilder()
                 .setSeconds(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
-        var action =
-            switch (messwert.getValue()) {
-              case double d when d > previousWaterLevel -> "higher";
-              default -> "lower";
-            };
+        var action = messwert.getValue() > previousWaterLevel ? "higher" : "lower";
 
         responseObserver.onNext(Bewertung.newBuilder().setAction(action).setTime(time).build());
         previousWaterLevel = messwert.getValue();
