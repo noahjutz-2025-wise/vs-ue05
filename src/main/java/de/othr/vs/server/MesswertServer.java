@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import your.pkg.Bewertung;
 import your.pkg.Messwert;
 import your.pkg.SimpleActionServiceGrpc.SimpleActionServiceImplBase;
+import your.pkg.StreamActionServiceGrpc;
 
 class SimpleActionServiceImpl extends SimpleActionServiceImplBase {
 
@@ -26,10 +27,30 @@ class SimpleActionServiceImpl extends SimpleActionServiceImplBase {
   }
 }
 
+class StreamActionServiceImpl extends StreamActionServiceGrpc.StreamActionServiceImplBase {
+  @Override
+  public StreamObserver<Messwert> streamRequiredAction(StreamObserver<Bewertung> responseObserver) {
+    return new StreamObserver<>() {
+      @Override
+      public void onNext(Messwert messwert) {}
+
+      @Override
+      public void onError(Throwable throwable) {}
+
+      @Override
+      public void onCompleted() {}
+    };
+  }
+}
+
 public class MesswertServer {
 
   public static void main(String[] args) throws IOException, InterruptedException {
-    var server = ServerBuilder.forPort(1234).addService(new SimpleActionServiceImpl()).build();
+    var server =
+        ServerBuilder.forPort(1234)
+            .addService(new SimpleActionServiceImpl())
+            .addService(new StreamActionServiceImpl())
+            .build();
 
     server.start();
 
