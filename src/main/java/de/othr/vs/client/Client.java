@@ -91,11 +91,11 @@ public class Client {
             });
 
     for (int i = 0; i < 1000; i++) {
-      var x = random.nextInt();
+      var x = random.nextInt(1000);
       System.out.println("Wasserstand: " + x);
       var measurement = Messwert.newBuilder().setSensor("Wasserstand").setValue(x).build();
       handle.onNext(measurement);
-      Thread.sleep(300);
+      Thread.sleep(1000);
     }
   }
 }
