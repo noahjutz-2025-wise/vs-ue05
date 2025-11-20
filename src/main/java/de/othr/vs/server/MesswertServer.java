@@ -36,7 +36,16 @@ class StreamActionServiceImpl extends StreamActionServiceGrpc.StreamActionServic
     return new StreamObserver<>() {
       @Override
       public void onNext(Messwert messwert) {
-        responseObserver.onNext(SimpleActionServiceImpl.b);
+        var time =
+            Timestamp.newBuilder()
+                .setSeconds(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
+        var action =
+            switch (messwert.getValue()) {
+              case double d when d > 500 -> "higher";
+              default -> "lower";
+            };
+
+        responseObserver.onNext(Bewertung.newBuilder().setAction(action).setTime(time).build());
       }
 
       @Override
